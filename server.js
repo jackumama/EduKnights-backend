@@ -8,6 +8,10 @@ require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.send('EduKnights Backend is Running');
+});
+
 // MongoDB Connection (use your connection string in MONGODB_URI env var)
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -49,4 +53,5 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(Server running on port ${PORT});
+
 });
