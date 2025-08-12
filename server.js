@@ -1,86 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduKnights Admin Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1e2a78;
-            color: #fff;
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 12px;
-            border: 1px solid #fff;
-            text-align: left;
-        }
-        th {
-            background-color: #f1c40f;
-            color: #1e2a78;
-        }
-    </style>
-</head>
-<body>
-    <h1>EduKnights Admin Dashboard</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Password</th>
-            </tr>
-        </thead>
-        <tbody id="userTable">
-            <!-- User data will be populated here -->
-        </tbody>
-    </table>
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
 
-    <script>
-        const adminCredentials = {
-            username: "arushpadmawar12",
-            password: "arushpad1234"
-        };
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-        // Step 1: Login as Admin to get token
-        fetch('https://eduknights-backend.onrender.com/admin/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(adminCredentials)
-        })
-        .then(res => res.json())
-        .then(loginData => {
-            if (loginData.token) {
-                // Step 2: Fetch users with token
-                fetch('https://eduknights-backend.onrender.com/admin/users', {
-                    headers: { 
-                        'Authorization': Bearer ${loginData.token}
-                    }
-                })
-                .then(res => res.json())
-                .then(users => {
-                    const tableBody = document.getElementById('userTable');
-                    users.forEach(user => {
-                        const row = `<tr>
-                                        <td>${user.name}</td>
-                                        <td>${user.email}</td>
-                                        <td>${user.password}</td>
-                                     </tr>`;
-                        tableBody.innerHTML += row;
-                    });
-                })
-                .catch(err => console.error("Error fetching users:", err));
-            } else {
-                console.error("Admin login failed:", loginData);
-            }
-        })
-        .catch(err => console.error("Error logging in:", err));
-    </script>
-</body>
-</html>
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Serve static files from the "public" folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Example API route to get users
+app.get('/admin/users', (req, res) => {
+    const users = [
+        { name: 'John Doe', email: 'john@example.com', password: '1234' },
+        { name: 'Jane Smith', email: 'jane@example.com', password: 'abcd' }
+    ];
+    res.json(users);
+});
+
+// Fallback for any route that doesn't match an API endpoint or file
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log(Server running on port ${PORT});
+});
